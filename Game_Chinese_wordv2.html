@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-HK" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>認字樂園 – 羅在晴讀字練習</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-display:'Baloo 2','Noto Sans TC',sans-serif;
+  --font-body:'Noto Sans TC',sans-serif;
+  --text-xs:clamp(.75rem,.7rem+.25vw,.875rem);
+  --text-sm:clamp(.9rem,.82rem+.2vw,1rem);
+  --text-base:clamp(1rem,.95rem+.25vw,1.15rem);
+  --text-lg:clamp(1.25rem,1.05rem+.8vw,1.75rem);
+  --text-xl:clamp(1.7rem,1.3rem+1.4vw,2.5rem);
+  --text-2xl:clamp(2.2rem,1.5rem+2.2vw,3.8rem);
+  --text-char:clamp(4.5rem,11vw,7.5rem);
+  --text-word:clamp(3rem,8vw,5rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+  --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;
+  --radius-md:1rem;--radius-lg:1.5rem;--radius-xl:2rem;--radius-full:9999px;
+  --color-bg:#fff9ed;
+  --color-surface:#fffdf8;
+  --color-surface-2:#fff5dd;
+  --color-border:#f0dcaa;
+  --color-text:#3d2c1e;
+  --color-text-muted:#7a6a58;
+  --color-text-faint:#bba98e;
+  --color-primary:#ff8b5c;
+  --color-primary-hover:#f46d37;
+  --color-blue:#5ca3f5;
+  --color-green:#58c97a;
+  --color-yellow:#ffc847;
+  --color-purple:#a87eff;
+  --color-danger:#f06262;
+  --color-pdf:#e84393;
+  --shadow-sm:0 4px 14px rgba(92,55,20,.08);
+  --shadow-md:0 10px 32px rgba(92,55,20,.13);
+  --shadow-lg:0 20px 48px rgba(92,55,20,.18);
+  --transition:.18s cubic-bezier(.16,1,.3,1);
+}
+[data-theme="dark"]{
+  --color-bg:#1e1610;--color-surface:#281f17;--color-surface-2:#332718;
+  --color-border:#5a4535;--color-text:#fff3e0;--color-text-muted:#d6bfa4;
+  --color-text-faint:#8a7060;
+  --shadow-sm:0 4px 14px rgba(0,0,0,.3);--shadow-md:0 10px 32px rgba(0,0,0,.45);--shadow-lg:0 20px 48px rgba(0,0,0,.55);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth;}
+body{min-height:100vh;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg);}
+button,input{font:inherit;color:inherit;cursor:pointer;border:none;background:none;}
+button:focus-visible{outline:3px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
+img{display:block;max-width:100%;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* HOME */
+#homeScreen{align-items:center;justify-content:flex-start;padding:var(--space-6) var(--space-4);}
+.home-inner{max-width:700px;width:100%;display:flex;flex-direction:column;gap:var(--space-5);margin:0 auto;}
+.home-header{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);}
+.logo{display:flex;align-items:center;gap:var(--space-3);font-family:var(--font-display);font-size:var(--text-xl);font-weight:800;}
+.logo-badge{width:3.2rem;height:3.2rem;border-radius:1.1rem;background:var(--color-primary);color:#fff;display:grid;place-items:center;font-size:1.6rem;box-shadow:var(--shadow-sm);}
+.header-actions{display:flex;gap:var(--space-2);}
+.icon-btn{min-width:44px;min-height:44px;padding:.6rem .9rem;border-radius:var(--radius-full);background:var(--color-surface);border:2px solid var(--color-border);font-size:1.1rem;transition:transform var(--transition),background var(--transition);}
+.icon-btn:hover{transform:translateY(-2px);background:var(--color-surface-2);}
+.home-hero{text-align:center;padding:var(--space-6) var(--space-4);background:var(--color-surface);border:3px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);}
+.home-hero h1{font-family:var(--font-display);font-size:var(--text-2xl);line-height:1.05;margin-bottom:var(--space-3);}
+.home-hero p{color:var(--color-text-muted);max-width:42ch;margin:0 auto;}
+.section-label{font-size:var(--text-sm);font-weight:700;color:var(--color-text-muted);margin-bottom:var(--space-2);}
+.level-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-3);}
+.level-card{background:var(--color-surface);border:3px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-4);text-align:center;cursor:pointer;transition:transform var(--transition),box-shadow var(--transition),border-color var(--transition);box-shadow:var(--shadow-sm);}
+.level-card:hover,.level-card:focus-visible{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:var(--color-primary);}
+.level-card[aria-pressed="true"]{border-color:var(--color-primary);background:color-mix(in oklch,var(--color-primary) 8%,var(--color-surface));}
+.level-card .lc-icon{font-size:2.2rem;margin-bottom:var(--space-2);}
+.level-card h3{font-family:var(--font-display);font-size:var(--text-base);font-weight:700;margin-bottom:.25rem;}
+.level-card p{font-size:var(--text-xs);color:var(--color-text-muted);}
+.level-card.pdf-card{border-color:var(--color-pdf);}
+.level-card.pdf-card[aria-pressed="true"]{background:color-mix(in oklch,var(--color-pdf) 8%,var(--color-surface));}
+.level-card.pdf-card:hover,.level-card.pdf-card:focus-visible{border-color:var(--color-pdf);}
+.pdf-badge{display:inline-block;background:var(--color-pdf);color:#fff;font-size:.7rem;font-weight:700;padding:.15rem .55rem;border-radius:999px;margin-bottom:.4rem;}
+.mode-row{background:var(--color-surface);border:3px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-sm);}
+.mode-row h2{font-family:var(--font-display);font-size:var(--text-base);font-weight:700;margin-bottom:var(--space-3);}
+.mode-btns{display:flex;gap:var(--space-3);flex-wrap:wrap;}
+.mode-pill{padding:.65rem 1.1rem;border-radius:var(--radius-full);border:2.5px solid var(--color-border);background:var(--color-surface-2);font-size:var(--text-sm);font-weight:700;transition:all var(--transition);}
+.mode-pill:hover{border-color:var(--color-primary);}
+.mode-pill.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+.start-btn{width:100%;padding:var(--space-4);border-radius:var(--radius-full);background:var(--color-primary);color:#fff;font-family:var(--font-display);font-size:var(--text-xl);font-weight:800;box-shadow:var(--shadow-md);transition:transform var(--transition),box-shadow var(--transition);}
+.start-btn:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+.print-link{text-align:center;font-size:var(--text-sm);color:var(--color-text-muted);}
+.print-link button{color:var(--color-primary);text-decoration:underline;}
+
+/* GAME */
+#gameScreen{padding:0;}
+.game-topbar{display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-5);background:var(--color-surface);border-bottom:2px solid var(--color-border);gap:var(--space-3);flex-wrap:wrap;}
+.level-badge{padding:.35rem .9rem;border-radius:var(--radius-full);color:#fff;font-size:var(--text-sm);font-weight:700;}
+.stats-row{display:flex;gap:var(--space-4);align-items:center;}
+.stat-item{text-align:center;min-width:3.2rem;}
+.stat-val{font-family:var(--font-display);font-size:var(--text-lg);font-weight:900;}
+.stat-lbl{font-size:var(--text-xs);color:var(--color-text-muted);}
+.topbar-actions{display:flex;gap:var(--space-2);}
+.progress-bar{height:6px;background:var(--color-border);}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--color-primary),var(--color-yellow));transition:width .5s ease;}
+.game-body{flex:1;display:flex;flex-direction:column;gap:var(--space-5);padding:var(--space-5);max-width:880px;margin:0 auto;width:100%;}
+.prompt-box{background:var(--color-surface);border:3px solid var(--color-border);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:var(--space-8);min-height:200px;text-align:center;gap:var(--space-3);}
+.prompt-box.pop{animation:pop .3s cubic-bezier(.175,.885,.32,1.275);}
+@keyframes pop{0%{transform:scale(.85);opacity:.4}100%{transform:scale(1);opacity:1}}
+.p-char{font-size:var(--text-char);font-weight:900;line-height:1;}
+.p-word{font-size:var(--text-word);font-weight:900;line-height:1.1;}
+.p-emoji{font-size:clamp(4rem,11vw,6.5rem);line-height:1;}
+.p-label{font-size:var(--text-base);color:var(--color-text-muted);}
+.choices-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4);}
+.choice-btn{border-radius:var(--radius-lg);padding:var(--space-4);background:var(--color-surface);border:3px solid var(--color-border);box-shadow:var(--shadow-sm);transition:transform var(--transition),border-color var(--transition),background var(--transition);display:flex;flex-direction:column;align-items:center;gap:.35rem;min-height:80px;justify-content:center;}
+.choice-btn:hover:not(:disabled){transform:translateY(-3px);border-color:var(--color-blue);box-shadow:var(--shadow-md);}
+.choice-btn:disabled{cursor:default;}
+.choice-btn .cb-main{font-size:var(--text-xl);font-weight:900;line-height:1;}
+.choice-btn .cb-sub{font-size:var(--text-xs);color:var(--color-text-muted);}
+.choice-btn.correct{background:#ecfdf3;border-color:var(--color-green);}
+.choice-btn.wrong{background:#fff2f2;border-color:var(--color-danger);}
+.choice-btn.correct .cb-main,.choice-btn.correct .cb-sub{color:#166534;}
+.choice-btn.wrong .cb-main,.choice-btn.wrong .cb-sub{color:#7f1d1d;}
+.feedback-row{min-height:2.2rem;display:flex;align-items:center;justify-content:center;font-size:var(--text-lg);font-weight:700;}
+.actions-row{display:flex;gap:var(--space-3);flex-wrap:wrap;}
+.btn-next{flex:1;padding:var(--space-4);border-radius:var(--radius-full);background:var(--color-primary);color:#fff;font-family:var(--font-display);font-size:var(--text-xl);font-weight:800;box-shadow:var(--shadow-md);transition:transform var(--transition);}
+.btn-next:hover{transform:translateY(-2px);}
+.btn-speak{padding:var(--space-3) var(--space-4);border-radius:var(--radius-full);background:var(--color-blue);color:#fff;font-size:var(--text-base);font-weight:700;}
+.btn-home{padding:var(--space-3) var(--space-4);border-radius:var(--radius-full);background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-base);font-weight:700;border:2px solid var(--color-border);}
+
+/* RESULT */
+#resultScreen{align-items:center;justify-content:center;padding:var(--space-8) var(--space-4);}
+.result-card{max-width:520px;width:100%;background:var(--color-surface);border:3px solid var(--color-border);border-radius:var(--radius-xl);padding:var(--space-8);box-shadow:var(--shadow-lg);text-align:center;}
+.result-trophy{font-size:5rem;margin-bottom:var(--space-4);animation:bounce 1s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+.result-card h2{font-family:var(--font-display);font-size:var(--text-2xl);margin-bottom:var(--space-2);}
+.result-score{font-size:var(--text-2xl);font-family:var(--font-display);font-weight:900;color:var(--color-primary);margin:var(--space-4) 0;}
+.result-stars{font-size:2.5rem;letter-spacing:.2rem;margin-bottom:var(--space-3);}
+.result-actions{display:flex;flex-direction:column;gap:var(--space-3);margin-top:var(--space-5);}
+.btn-primary{padding:var(--space-4);border-radius:var(--radius-full);background:var(--color-primary);color:#fff;font-family:var(--font-display);font-size:var(--text-xl);font-weight:800;box-shadow:var(--shadow-md);}
+.btn-secondary{padding:var(--space-3);border-radius:var(--radius-full);background:var(--color-surface-2);color:var(--color-text-muted);font-size:var(--text-base);font-weight:700;border:2px solid var(--color-border);}
+
+/* PRINT */
+#printScreen{align-items:center;padding:var(--space-6) var(--space-4);}
+.print-inner{max-width:860px;width:100%;}
+.print-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-5);flex-wrap:wrap;gap:var(--space-3);}
+.print-header h2{font-family:var(--font-display);font-size:var(--text-xl);}
+.btn-print{padding:var(--space-3) var(--space-5);border-radius:var(--radius-full);background:var(--color-primary);color:#fff;font-weight:700;}
+.btn-back{padding:var(--space-3) var(--space-4);border-radius:var(--radius-full);border:2px solid var(--color-border);font-weight:700;}
+.filter-row{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-4);}
+.filter-btn{padding:.5rem 1rem;border-radius:var(--radius-full);border:2px solid var(--color-border);background:var(--color-surface-2);font-size:var(--text-sm);font-weight:700;transition:all var(--transition);}
+.filter-btn.active{background:var(--color-primary);color:#fff;border-color:var(--color-primary);}
+.filter-btn.pdf-filter.active{background:var(--color-pdf);border-color:var(--color-pdf);}
+.flashcards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);}
+.fc{background:var(--color-surface);border:2.5px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-3);text-align:center;box-shadow:var(--shadow-sm);}
+.fc.pdf-fc{border-color:var(--color-pdf);}
+.fc-emoji{font-size:2.5rem;margin-bottom:var(--space-1);}
+.fc-char{font-size:2.5rem;font-weight:900;line-height:1;margin-bottom:.25rem;}
+.fc-word{font-size:var(--text-xs);color:var(--color-text-muted);}
+.fc-tag{display:inline-block;font-size:.62rem;font-weight:700;padding:.1rem .4rem;border-radius:999px;margin-top:.3rem;}
+.fc-tag.pdf-tag{background:var(--color-pdf);color:#fff;}
+.stars-bar{font-size:1.1rem;}
+
+@media print{
+  .screen:not(#printScreen){display:none!important;}
+  #printScreen{display:block!important;}
+  .print-header .btn-print,.print-header .btn-back,.filter-row{display:none!important;}
+  .flashcards-grid{grid-template-columns:repeat(4,1fr);}
+  .fc{border:1.5px solid #ccc;box-shadow:none;break-inside:avoid;}
+  body{background:#fff;}
+}
+@media(max-width:620px){
+  .level-grid,.choices-grid{grid-template-columns:1fr;}
+  .flashcards-grid{grid-template-columns:repeat(2,1fr);}
+  .game-body{padding:var(--space-4) var(--space-3);}
+}
+</style>
+</head>
+<body>
+<a href="#gameScreen" class="sr-only">跳去遊戲</a>
+
+<!-- HOME -->
+<div id="homeScreen" class="screen active">
+  <div class="home-inner">
+    <div class="home-header">
+      <div class="logo"><div class="logo-badge">字</div>認字樂園</div>
+      <div class="header-actions">
+        <button class="icon-btn" id="soundBtn" aria-label="開關聲音">🔊</button>
+        <button class="icon-btn" id="themeBtn" aria-label="深淺色">🌙</button>
+      </div>
+    </div>
+    <div class="home-hero">
+      <h1>🌟 認字樂園</h1>
+      <p>K2 / K3 · 讀字練習第二課 · 三種遊戲模式 · 可印認字卡</p>
+    </div>
+    <div class="section-label">揀一個關卡</div>
+    <div class="level-grid" id="levelGrid">
+      <div class="level-card" data-level="k2" tabindex="0" role="button" aria-pressed="false">
+        <div class="lc-icon">🌱</div><h3>K2 初階</h3><p>日、月、人、口、手、木、山、水、火、雨、車、魚</p>
+      </div>
+      <div class="level-card" data-level="k3" tabindex="0" role="button" aria-pressed="false">
+        <div class="lc-icon">🌿</div><h3>K3 進階</h3><p>大、小、中、上、下、左、右、多、少、天、地、心</p>
+      </div>
+      <div class="level-card" data-level="body" tabindex="0" role="button" aria-pressed="false">
+        <div class="lc-icon">👁️</div><h3>身體部位</h3><p>眼、耳、鼻、嘴、頭、手、腳、肚</p>
+      </div>
+      <div class="level-card pdf-card" data-level="pdf2" tabindex="0" role="button" aria-pressed="true">
+        <div class="pdf-badge">PDF 第二課</div>
+        <div class="lc-icon">📖</div><h3>讀字練習第二課</h3><p>孩子、父母、公園、婆婆、大家、哥哥、弟弟…共 30 個詞語</p>
+      </div>
+      <div class="level-card" data-level="mixed" tabindex="0" role="button" aria-pressed="false" style="grid-column:span 2;">
+        <div class="lc-icon">🔀</div><h3>混合挑戰</h3><p>全部詞語隨機出題</p>
+      </div>
+    </div>
+    <div class="mode-row">
+      <h2>遊戲模式</h2>
+      <div class="mode-btns">
+        <!--<button class="mode-pill active" data-mode="wordToWord">認字（選讀音）</button>-->
+        <button class="mode-pill" data-mode="soundToWord">聽音搵字</button>
+        <button class="mode-pill" data-mode="emojiToWord">圖搵字</button>
+      </div>
+    </div>
+    <button class="start-btn" id="startBtn">開始闖關 ▶</button>
+    <p class="print-link">想印認字卡？<button id="toPrintBtn">按呢度 →</button></p>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="gameScreen" class="screen">
+  <div class="game-topbar">
+    <div style="display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap;">
+      <span class="level-badge" id="topLevelBadge">第二課</span>
+      <span class="stars-bar" id="starsBar" aria-label="星星進度">☆☆☆☆☆</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-val" id="gs-score">0</div><div class="stat-lbl">分數</div></div>
+      <div class="stat-item"><div class="stat-val" id="gs-round">1/10</div><div class="stat-lbl">題號</div></div>
+      <div class="stat-item"><div class="stat-val" id="gs-streak">0🔥</div><div class="stat-lbl">連答</div></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="gs-sound" aria-label="聲音">🔊</button>
+      <button class="icon-btn" id="gs-home" aria-label="返回主頁">🏠</button>
+    </div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <div class="game-body">
+    <div class="prompt-box" id="promptBox" aria-live="polite"></div>
+    <div class="feedback-row" id="feedbackRow" aria-live="polite"></div>
+    <div class="choices-grid" id="choicesGrid"></div>
+    <div class="actions-row">
+      <button class="btn-speak" id="speakBtn">🔊 朗讀</button>
+      <button class="btn-next" id="nextBtn">下一題 →</button>
+      <button class="btn-home" id="quitBtn">退出</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <div class="result-card">
+    <div class="result-trophy" id="resTrophy">🏆</div>
+    <h2 id="resTitle">完成！</h2>
+    <div class="result-stars" id="resStars"></div>
+    <div class="result-score" id="resScore"></div>
+    <p id="resMsg" style="color:var(--color-text-muted);"></p>
+    <div class="result-actions">
+      <button class="btn-primary" id="playAgainBtn">再玩一次 🎯</button>
+      <button class="btn-secondary" id="homeBtn2">返回主頁</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT -->
+<div id="printScreen" class="screen">
+  <div class="print-inner">
+    <div class="print-header">
+      <h2>🖨️ 認字卡（可列印）</h2>
+      <div style="display:flex;gap:var(--space-3);">
+        <button class="btn-back" id="backFromPrint">← 返回</button>
+        <button class="btn-print" onclick="window.print()">🖨️ 列印</button>
+      </div>
+    </div>
+    <div class="filter-row" id="printFilter"></div>
+    <div class="flashcards-grid" id="flashcardsGrid"></div>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const LEVELS = {
+  k2:{
+    label:'K2 初階', color:'#ff8b5c',
+    items:[
+      {word:'日',    emoji:'☀️', speak:'日，太陽。'},
+      {word:'月',    emoji:'🌙', speak:'月，月亮。'},
+      {word:'人',    emoji:'🧒', speak:'人。'},
+      {word:'口',    emoji:'👄', speak:'口。'},
+      {word:'手',    emoji:'✋', speak:'手。'},
+      {word:'木',    emoji:'🌳', speak:'木，樹木。'},
+      {word:'山',    emoji:'⛰️', speak:'山。'},
+      {word:'水',    emoji:'💧', speak:'水。'},
+      {word:'火',    emoji:'🔥', speak:'火。'},
+      {word:'雨',    emoji:'🌧️', speak:'雨。'},
+      {word:'車',    emoji:'🚗', speak:'車。'},
+      {word:'魚',    emoji:'🐟', speak:'魚。'},
+    ]
+  },
+  k3:{
+    label:'K3 進階', color:'#58c97a',
+    items:[
+      {word:'大',    emoji:'🦣', speak:'大。'},
+      {word:'小',    emoji:'🐭', speak:'小。'},
+      {word:'中',    emoji:'⏺️', speak:'中。'},
+      {word:'上',    emoji:'⬆️', speak:'上。'},
+      {word:'下',    emoji:'⬇️', speak:'下。'},
+      {word:'左',    emoji:'⬅️', speak:'左。'},
+      {word:'右',    emoji:'➡️', speak:'右。'},
+      {word:'多',    emoji:'🌟', speak:'多。'},
+      {word:'少',    emoji:'🌱', speak:'少。'},
+      {word:'天',    emoji:'🌤️', speak:'天空。'},
+      {word:'地',    emoji:'🪨', speak:'地面。'},
+      {word:'心',    emoji:'❤️', speak:'心。'},
+    ]
+  },
+  body:{
+    label:'身體部位', color:'#a87eff',
+    items:[
+      {word:'眼睛', emoji:'👁️', speak:'眼睛。'},
+      {word:'耳朵', emoji:'👂', speak:'耳朵。'},
+      {word:'鼻子', emoji:'👃', speak:'鼻子。'},
+      {word:'嘴巴', emoji:'👄', speak:'嘴巴。'},
+      {word:'頭',   emoji:'🗣️', speak:'頭。'},
+      {word:'手',   emoji:'🤚', speak:'手。'},
+      {word:'腳',   emoji:'🦶', speak:'腳。'},
+      {word:'肚子', emoji:'🫃', speak:'肚子。'},
+    ]
+  },
+  pdf2:{
+    label:'第二課', color:'#e84393',
+    items:[
+      {word:'孩子',  emoji:'👧', speak:'孩子。'},
+      {word:'父母',  emoji:'👨‍👩‍👧', speak:'父母。'},
+      {word:'公園',  emoji:'🌳', speak:'公園。'},
+      {word:'婆婆',  emoji:'👵', speak:'婆婆。'},
+      {word:'大家',  emoji:'👨‍👩‍👧‍👦', speak:'大家。'},
+      {word:'你們',  emoji:'🫂', speak:'你們。'},
+      {word:'冬天',  emoji:'❄️', speak:'冬天。'},
+      {word:'聖誕',  emoji:'🎄', speak:'聖誕。'},
+      {word:'哥哥',  emoji:'👦', speak:'哥哥。'},
+      {word:'弟弟',  emoji:'👶', speak:'弟弟。'},
+      {word:'姊姊',  emoji:'👧', speak:'姊姊。'},
+      {word:'妹妹',  emoji:'🧒', speak:'妹妹。'},
+      {word:'快樂',  emoji:'😄', speak:'快樂。'},
+      {word:'毛衣',  emoji:'🧥', speak:'毛衣。'},
+      {word:'穿衣',  emoji:'👕', speak:'穿衣。'},
+      {word:'寶貝',  emoji:'💎', speak:'寶貝。'},
+      {word:'開心',  emoji:'😊', speak:'開心。'},
+      {word:'毛冷',  emoji:'🧤', speak:'毛冷。'},
+      {word:'鞋子',  emoji:'👟', speak:'鞋子。'},
+      {word:'愛',    emoji:'❤️', speak:'愛。'},
+      {word:'個',    emoji:'🔢', speak:'個。'},
+      {word:'隻',    emoji:'🐾', speak:'隻。'},
+      {word:'的',    emoji:'📌', speak:'的。'},
+      {word:'在',    emoji:'📍', speak:'在。'},
+      {word:'做',    emoji:'🛠️', speak:'做。'},
+      {word:'走',    emoji:'🚶', speak:'走。'},
+      {word:'住',    emoji:'🏠', speak:'住。'},
+      {word:'中秋節',emoji:'🥮', speak:'中秋節。'},
+      {word:'月亮',  emoji:'🌕', speak:'月亮。'},
+      {word:'老師',  emoji:'👩‍🏫', speak:'老師。'},
+      {word:'我們',  emoji:'🤝', speak:'我們。'},
+      {word:'工友',  emoji:'🔧', speak:'工友。'},
+      {word:'朋友',  emoji:'👫', speak:'朋友。'},
+      {word:'司機',  emoji:'🚌', speak:'司機。'},
+      {word:'學校',  emoji:'🏫', speak:'學校。'},
+      {word:'書包',  emoji:'🎒', speak:'書包。'},
+      {word:'聖誕節',emoji:'🎅', speak:'聖誕節。'},
+    ]
+  },
+  mixed:{
+    label:'混合挑戰', color:'#ffc847',
+    items:[]
+  }
+};
+LEVELS.mixed.items=[...LEVELS.k2.items,...LEVELS.k3.items,...LEVELS.body.items,...LEVELS.pdf2.items];
+
+const TOTAL_ROUNDS=10;
+let soundOn=true, currentLevel='pdf2', currentMode='wordToWord';
+let gameItems=[], currentItem=null, currentChoices=[];
+let score=0, streak=0, roundIndex=0, answered=false;
+
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function $id(id){return document.getElementById(id);}
+function speak(text){
+  if(!soundOn||!('speechSynthesis' in window))return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='zh-TW';u.rate=0.75;
+  window.speechSynthesis.speak(u);
+}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  $id(id).classList.add('active');
+}
+function getAllItems(){
+  return[...LEVELS.k2.items,...LEVELS.k3.items,...LEVELS.body.items,...LEVELS.pdf2.items];
+}
+
+// THEME & SOUND
+$id('themeBtn').addEventListener('click',()=>{
+  const d=document.documentElement;
+  const next=d.getAttribute('data-theme')==='dark'?'light':'dark';
+  d.setAttribute('data-theme',next);
+  $id('themeBtn').textContent=next==='dark'?'☀️':'🌙';
+});
+function toggleSound(){
+  soundOn=!soundOn;
+  const icon=soundOn?'🔊':'🔇';
+  $id('soundBtn').textContent=icon;$id('gs-sound').textContent=icon;
+}
+$id('soundBtn').addEventListener('click',toggleSound);
+$id('gs-sound').addEventListener('click',toggleSound);
+
+// LEVEL SELECT
+document.querySelectorAll('.level-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    document.querySelectorAll('.level-card').forEach(c=>c.setAttribute('aria-pressed','false'));
+    card.setAttribute('aria-pressed','true');
+    currentLevel=card.dataset.level;
+  });
+  card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')card.click();});
+});
+
+// MODE SELECT
+document.querySelectorAll('.mode-pill').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-pill').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentMode=btn.dataset.mode;
+  });
+});
+
+$id('startBtn').addEventListener('click',startGame);
+$id('toPrintBtn').addEventListener('click',showPrint);
+$id('backFromPrint').addEventListener('click',()=>showScreen('homeScreen'));
+
+// GAME
+function startGame(){
+  score=0;streak=0;roundIndex=0;answered=false;
+  const pool=shuffle(LEVELS[currentLevel].items);
+  gameItems=pool.slice(0,Math.min(TOTAL_ROUNDS,pool.length));
+  while(gameItems.length<TOTAL_ROUNDS)gameItems.push(...shuffle(pool));
+  gameItems=gameItems.slice(0,TOTAL_ROUNDS);
+  $id('topLevelBadge').textContent=LEVELS[currentLevel].label;
+  $id('topLevelBadge').style.background=LEVELS[currentLevel].color;
+  updateTopStats();
+  showScreen('gameScreen');
+  loadRound();
+}
+
+function updateTopStats(){
+  $id('gs-score').textContent=score;
+  $id('gs-round').textContent=`${roundIndex+1}/${TOTAL_ROUNDS}`;
+  $id('gs-streak').textContent=`${streak}🔥`;
+  $id('progressFill').style.width=`${(roundIndex/TOTAL_ROUNDS)*100}%`;
+  const stars=Math.min(5,Math.floor(score/20));
+  $id('starsBar').textContent='★'.repeat(stars)+'☆'.repeat(5-stars);
+}
+
+function loadRound(){
+  answered=false;
+  currentItem=gameItems[roundIndex];
+  const all=getAllItems();
+  const distractors=shuffle(all.filter(i=>i.word!==currentItem.word)).slice(0,3);
+  currentChoices=shuffle([currentItem,...distractors]);
+  const pb=$id('promptBox');
+  pb.classList.remove('pop');void pb.offsetWidth;pb.classList.add('pop');
+  if(currentMode==='wordToWord'){
+    pb.innerHTML=`<div class="p-word">${currentItem.word}</div><div class="p-label">揀出相同嘅字</div>`;
+  }else if(currentMode==='emojiToWord'){
+    pb.innerHTML=`<div class="p-emoji" aria-hidden="true">${currentItem.emoji}</div><div class="p-label">呢個係咩？</div>`;
+  }else{
+    pb.innerHTML=`<div class="p-emoji" aria-hidden="true">🔊</div><div class="p-label">聽讀音，揀啱中文字</div>`;
+    setTimeout(()=>speak(currentItem.speak),300);
+  }
+  $id('feedbackRow').textContent='';
+  renderChoices();
+  updateTopStats();
+}
+
+function renderChoices(){
+  const grid=$id('choicesGrid');grid.innerHTML='';
+  currentChoices.forEach(choice=>{
+    const btn=document.createElement('button');
+    btn.className='choice-btn';
+    btn.setAttribute('aria-label',`選擇 ${choice.word}`);
+    if(currentMode==='wordToWord'||currentMode==='soundToWord'){
+      btn.innerHTML=`<div class="cb-main">${choice.word}</div>`;
+    }else{
+      btn.innerHTML=`<div class="cb-main">${choice.word}</div><div class="cb-sub"></div>`;
+    }
+    btn.addEventListener('click',()=>checkAnswer(choice,btn));
+    grid.appendChild(btn);
+  });
+}
+
+function checkAnswer(choice,btn){
+  if(answered)return;answered=true;
+  const allBtns=[...$id('choicesGrid').querySelectorAll('.choice-btn')];
+  allBtns.forEach(b=>b.disabled=true);
+  const correct=choice.word===currentItem.word;
+  if(correct){
+    score+=10;streak++;btn.classList.add('correct');
+    $id('feedbackRow').innerHTML='✅ 答啱！你好叻！';
+    speak(`答啱咗，${currentItem.speak}`);
+  }else{
+    streak=0;btn.classList.add('wrong');
+    const cb=allBtns[currentChoices.indexOf(currentItem)];
+    if(cb)cb.classList.add('correct');
+    $id('feedbackRow').innerHTML=`❌ 正確係「${currentItem.word}」`;
+    speak(`正確係，${currentItem.speak}`);
+  }
+  updateTopStats();
+}
+
+$id('nextBtn').addEventListener('click',()=>{
+  if(roundIndex<TOTAL_ROUNDS-1){roundIndex++;loadRound();}else showResult();
+});
+$id('speakBtn').addEventListener('click',()=>{if(currentItem)speak(currentItem.speak);});
+$id('gs-home').addEventListener('click',()=>showScreen('homeScreen'));
+$id('quitBtn').addEventListener('click',()=>showScreen('homeScreen'));
+
+function showResult(){
+  $id('progressFill').style.width='100%';
+  const pct=score/(TOTAL_ROUNDS*10);
+  let trophy,title,msg,stars;
+  if(pct>=.9){trophy='🏆';title='超級叻！';msg='全對！繼續保持！';stars=5;}
+  else if(pct>=.7){trophy='🥇';title='非常好！';msg='再試多次可以得滿分！';stars=4;}
+  else if(pct>=.5){trophy='🥈';title='做得好！';msg='繼續練習，你一定識嘅！';stars=3;}
+  else if(pct>=.3){trophy='🌟';title='加油！';msg='多玩幾次一定進步！';stars=2;}
+  else{trophy='💪';title='繼續努力！';msg='再玩一次，一定識多啲！';stars=1;}
+  $id('resTrophy').textContent=trophy;$id('resTitle').textContent=title;
+  $id('resStars').textContent='★'.repeat(stars)+'☆'.repeat(5-stars);
+  $id('resScore').textContent=`${score} 分 / ${TOTAL_ROUNDS*10} 分`;
+  $id('resMsg').textContent=msg;
+  showScreen('resultScreen');
+}
+$id('playAgainBtn').addEventListener('click',startGame);
+$id('homeBtn2').addEventListener('click',()=>showScreen('homeScreen'));
+
+// PRINT
+let printFilter='pdf2';
+function showPrint(){buildPrintFilter();renderFlashcards();showScreen('printScreen');}
+
+function buildPrintFilter(){
+  const row=$id('printFilter');row.innerHTML='';
+  [
+    {key:'all',label:'全部',cls:''},
+    {key:'pdf2',label:'📖 第二課',cls:'pdf-filter'},
+    {key:'k2',label:'K2 初階',cls:''},
+    {key:'k3',label:'K3 進階',cls:''},
+    {key:'body',label:'身體部位',cls:''},
+  ].forEach(f=>{
+    const btn=document.createElement('button');
+    btn.className='filter-btn '+(f.cls)+(f.key===printFilter?' active':'');
+    btn.textContent=f.label;
+    btn.addEventListener('click',()=>{
+      printFilter=f.key;
+      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');renderFlashcards();
+    });
+    row.appendChild(btn);
+  });
+}
+
+function renderFlashcards(){
+  let items=[];
+  const isPdf2=k=>k==='pdf2';
+  if(printFilter==='all')items=[...LEVELS.pdf2.items,...LEVELS.k2.items,...LEVELS.k3.items,...LEVELS.body.items];
+  else items=[...LEVELS[printFilter].items];
+  const grid=$id('flashcardsGrid');grid.innerHTML='';
+  items.forEach(item=>{
+    const isPdf=printFilter==='pdf2'||(printFilter==='all'&&LEVELS.pdf2.items.includes(item));
+    const fc=document.createElement('div');
+    fc.className='fc'+(isPdf?' pdf-fc':'');
+    fc.innerHTML=`<div class="fc-emoji" aria-hidden="true">${item.emoji}</div>
+                  <div class="fc-char">${item.word}</div>
+                  ${isPdf?'<div class="fc-tag pdf-tag">第二課</div>':''}`;
+    grid.appendChild(fc);
+  });
+}
+</script>
+</body>
+</html>
