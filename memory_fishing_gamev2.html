@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>啤牌釣魚記憶遊戲</title>
+<style>
+  body {
+    font-family: "Microsoft JhengHei", "PingFang TC", sans-serif;
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  h1 {
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+  .controls {
+    margin: 15px 0;
+  }
+  button.level {
+    font-size: 20px;
+    padding: 12px 24px;
+    margin: 8px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #ff9a3c;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+  }
+  button.level:hover { transform: scale(1.05); }
+  button.level.active { background: #ff5e3a; }
+  #status {
+    font-size: 22px;
+    margin: 10px 0;
+    color: #2c3e50;
+    font-weight: bold;
+  }
+  #board {
+    display: grid;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 900px;
+  }
+  .card {
+    width: 80px;
+    height: 110px;
+    background: #2c3e50;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.3s;
+    user-select: none;
+  }
+  .card.flipped {
+    background: white;
+    border: 3px solid #ff9a3c;
+    transform: scale(1.05);
+  }
+  .card.matched {
+    background: #b5f2b5;
+    border: 3px solid #27ae60;
+    cursor: default;
+  }
+  .card .back { color: white; font-size: 30px; }
+  #restart {
+    font-size: 18px;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: none;
+    background: #4a90e2;
+    color: white;
+    cursor: pointer;
+  }
+  #confetti {
+    font-size: 30px;
+  }
+  .timer {
+    font-size: 18px;
+    color: #555;
+  }
+</style>
+</head>
+<body>
+
+<h1>🐟 啤牌釣魚記憶遊戲 🐟</h1>
+<div class="controls">
+  <button class="level" id="lowBtn" onclick="startGame('low')">低難度（10隻牌）</button>
+  <button class="level" id="highBtn" onclick="startGame('high')">高難度（20隻牌）</button>
+</div>
+<div id="status">請選擇難度開始遊戲！</div>
+<div class="timer" id="movesCounter"></div>
+<div id="board"></div>
+<button id="restart" onclick="startGame(currentLevel)" style="display:none;">🔁 再玩一次</button>
+<div id="confetti"></div>
+
+<script>
+const suitsEmoji = ["🐠","🐟","🐡","🦐","🐙","🦀","🐳","🦞","🐢","🦑","⭐","🌈","🍀","🌟","🎈","🍎","🍊","🍇","🍉","🍓"];
+
+let currentLevel = null;
+let cards = [];
+let flippedCards = [];
+let matchedCount = 0;
+let totalPairs = 0;
+let moves = 0;
+let lockBoard = false;
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function startGame(level) {
+  currentLevel = level;
+  document.getElementById('lowBtn').classList.toggle('active', level === 'low');
+  document.getElementById('highBtn').classList.toggle('active', level === 'high');
+
+  const numCards = level === 'low' ? 10 : 20;
+  totalPairs = numCards / 2;
+  matchedCount = 0;
+  moves = 0;
+  flippedCards = [];
+  lockBoard = false;
+
+  const chosenSymbols = shuffle([...suitsEmoji]).slice(0, totalPairs);
+  let deck = [...chosenSymbols, ...chosenSymbols];
+  deck = shuffle(deck);
+
+  cards = deck.map((symbol, idx) => ({ id: idx, symbol, flipped: false, matched: false }));
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  const cols = level === 'low' ? 5 : 5;
+  board.style.gridTemplateColumns = `repeat(${cols}, 80px)`;
+
+  cards.forEach(card => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.dataset.id = card.id;
+    div.innerHTML = '<span class="back">🎣</span>';
+    div.onclick = () => flipCard(card.id, div);
+    board.appendChild(div);
+  });
+
+  document.getElementById('status').textContent = `難度：${level === 'low' ? '低（10隻牌）' : '高（20隻牌）'} — 加油記住位置！`;
+  document.getElementById('movesCounter').textContent = `已翻牌次數：${moves}`;
+  document.getElementById('restart').style.display = 'none';
+  document.getElementById('confetti').textContent = '';
+}
+
+function flipCard(id, div) {
+  if (lockBoard) return;
+  const card = cards.find(c => c.id === id);
+  if (card.flipped || card.matched) return;
+
+  card.flipped = true;
+  div.classList.add('flipped');
+  div.innerHTML = `<span>${card.symbol}</span>`;
+  playFlipSound();
+  flippedCards.push({ card, div });
+
+  if (flippedCards.length === 2) {
+    moves++;
+    document.getElementById('movesCounter').textContent = `已翻牌次數：${moves}`;
+    lockBoard = true;
+    const [first, second] = flippedCards;
+    if (first.card.symbol === second.card.symbol) {
+      first.card.matched = true;
+      second.card.matched = true;
+      first.div.classList.add('matched');
+      second.div.classList.add('matched');
+      matchedCount++;
+      flippedCards = [];
+      lockBoard = false;
+      playMatchSound();
+      if (matchedCount === totalPairs) {
+        setTimeout(() => {
+          playWinSound();
+          document.getElementById('status').textContent = `🎉 完成！總共用了 ${moves} 次翻牌 🎉`;
+          document.getElementById('confetti').textContent = '🎉🐟🎉🐠🎉';
+          document.getElementById('restart').style.display = 'inline-block';
+        }, 300);
+      }
+    } else {
+      playMismatchSound();
+      setTimeout(() => {
+        first.card.flipped = false;
+        second.card.flipped = false;
+        first.div.classList.remove('flipped');
+        second.div.classList.remove('flipped');
+        first.div.innerHTML = '<span class="back">🎣</span>';
+        second.div.innerHTML = '<span class="back">🎣</span>';
+        flippedCards = [];
+        lockBoard = false;
+      }, 800);
+    }
+  }
+}
+</script>
+
+
+<script>
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, duration, type='sine', volume=0.2) {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.value = volume;
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function playFlipSound() {
+  playTone(600, 0.1, 'triangle', 0.15);
+}
+
+function playMatchSound() {
+  playTone(784, 0.12, 'sine', 0.2);
+  setTimeout(() => playTone(988, 0.15, 'sine', 0.2), 120);
+}
+
+function playMismatchSound() {
+  playTone(200, 0.25, 'sawtooth', 0.15);
+}
+
+function playWinSound() {
+  const notes = [523, 587, 659, 784, 880, 1046];
+  notes.forEach((f, i) => setTimeout(() => playTone(f, 0.18, 'sine', 0.2), i * 150));
+}
+
+function unlockAudio() {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+document.addEventListener('click', unlockAudio, { once: true });
+</script>
+</body>
+</html>
