@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小小購物家｜港幣付款遊戲</title>
+<style>
+*{box-sizing:border-box;font-family:"Microsoft JhengHei","PingFang HK",sans-serif}body{margin:0;padding:16px;min-height:100vh;background:linear-gradient(135deg,#fff1d5,#ffd1ba);color:#4a342a}h1{text-align:center;margin:4px 0 10px;font-size:clamp(25px,5vw,36px)}.subtitle{text-align:center;font-size:18px;margin:8px auto 16px}.screen{display:none}.screen.active{display:block}.products{max-width:920px;margin:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:13px}.product{background:white;border:3px solid transparent;border-radius:16px;padding:10px;text-align:center;box-shadow:0 3px 9px #0002}.product.chosen{border-color:#ef765e;background:#fff7f1}.emoji{font-size:44px}.name{font-weight:bold;font-size:15px;margin-top:3px}.price{color:#c64a45;font-weight:bold;margin:3px}.quantity{display:flex;justify-content:center;gap:7px;align-items:center}.quantity button{width:29px;height:29px;border:0;border-radius:50%;background:#f2a154;color:white;font-size:19px;font-weight:bold}.quantity span{min-width:20px;font-weight:bold}.panel{max-width:820px;background:#fffdf8;margin:20px auto;padding:16px;border-radius:16px;text-align:center;box-shadow:0 3px 10px #0002}.total{font-size:27px;font-weight:bold;color:#21867a;margin-bottom:8px}.big{border:0;border-radius:26px;padding:12px 26px;margin:5px;color:white;background:#21867a;font-size:18px;font-weight:bold}.big:disabled{background:#bdbdbd}.orange{background:#ef9d45}.red{background:#df6753}.receipt{max-width:480px;margin:0 auto 14px;padding:12px 18px;background:#fffdf0;border-radius:12px;box-shadow:0 2px 6px #0002}.receipt div{display:flex;justify-content:space-between;padding:3px;border-bottom:1px dashed #ddd}.due{font-size:33px;font-weight:bold;color:#c64a45}.money-grid{max-width:850px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:16px}.money{border:0;background:transparent;cursor:pointer;padding:0;display:flex;flex-direction:column;align-items:center}.coin-frame{width:96px;height:96px;border-radius:50%;overflow:hidden;background:#eee;box-shadow:0 4px 8px #0005;border:3px solid #b2b2b2}.note-frame{width:142px;height:74px;border-radius:7px;overflow:hidden;background:#eee;box-shadow:0 4px 8px #0005;border:2px solid #ddd}.money img{width:100%;height:100%;object-fit:cover}.money[data-kind="coin"] img{object-position:center 36%}.money[data-id="one"] img{object-position:center 31%}.money[data-id="two"] img{object-position:center 35%}.money[data-id="five"] img{object-position:center 36%}.money[data-id="ten"] img{object-position:center 32%}.money[data-kind="note"] img{object-position:center 28%}.money:active .coin-frame,.money:active .note-frame{transform:scale(.92)}.money-label{font-size:15px;font-weight:bold;margin-top:6px}.paid{max-width:780px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px auto;min-height:35px}.chip{border:2px solid #21867a;background:#eaf8f4;border-radius:18px;padding:5px 10px;font-weight:bold;cursor:pointer}.paidtotal{text-align:center;font-size:24px;font-weight:bold}.feedback{text-align:center;min-height:32px;margin:13px;font-size:21px;font-weight:bold}.good{color:#21867a}.bad{color:#d35445}.buttons{text-align:center}.notice{font-size:13px;text-align:center;color:#765;margin:4px auto 14px;max-width:720px}.result-icon{font-size:60px}
+</style>
+</head>
+<body>
+<h1>🛒 小小購物家・港幣付款遊戲 🪙</h1>
+<section id="shop" class="screen active"><p class="subtitle">選擇你想買嘅玩具、食物同水果！</p><div class="products" id="products"></div><div class="panel"><div class="total" id="cartTotal">總共：$0.00</div><button class="big" id="pay" disabled>去付款 →</button></div></section>
+<section id="payment" class="screen"><p class="subtitle">睇吓你買咗啲乜：</p><div id="receipt" class="receipt"></div><div class="panel"><div>需要付款：</div><div class="due" id="due"></div></div><p class="subtitle">揀選港幣嚟付款！</p><p class="notice">撳一下錢幣／紙幣加入付款；撳下方已選金額可移除。</p><div class="money-grid" id="money"></div><div class="paidtotal">已付：<span id="paidTotal">$0.00</span></div><div class="paid" id="paid"></div><div id="feedback" class="feedback"></div><div class="buttons"><button class="big red" id="clear">重新選擇</button><button class="big" id="check">✔ 核對付款</button></div></section>
+<section id="result" class="screen"><div class="panel" id="resultbox"></div><div class="buttons"><button class="big orange" id="again">🔁 再玩一次</button></div></section>
+<script>
+/* 把本 HTML 檔與已上傳的 7 張截圖放在同一資料夾，並保留以下檔名。 */
+const products=[['🧸','熊仔公仔',15],['🚗','小汽車',12],['🧱','積木',20],['⚽','波波',8],['🎈','氣球',5],['🧩','拼圖',18],['🍎','蘋果',3],['🍌','香蕉',2],['🍊','橙',2.5],['🍉','西瓜',10],['🍓','士多啤梨',6],['🍞','麵包',4],['🍦','雪糕',7],['🍪','餅乾',5.5],['🍍','菠蘿',9],['🍕','薄餅',25]];
+/* 已取消：10仙、20仙、50仙。以下使用你提供的截圖。 */
+const money=[
+ {id:'one',label:'$1 硬幣',v:1,kind:'coin',img:'IMG_7324.jpeg'},
+ {id:'two',label:'$2 硬幣',v:2,kind:'coin',img:'IMG_7325.jpeg'},
+ {id:'five',label:'$5 硬幣',v:5,kind:'coin',img:'IMG_7326.jpeg'},
+ {id:'ten',label:'$10 硬幣',v:10,kind:'coin',img:'IMG_7327.jpeg'},
+ {id:'twenty',label:'$20 紙幣',v:20,kind:'note',img:'IMG_7328.jpeg'},
+ {id:'fifty',label:'$50 紙幣',v:50,kind:'note',img:'IMG_7329.jpeg'},
+ {id:'hundred',label:'$100 紙幣',v:100,kind:'note',img:'IMG_7330.jpeg'}
+];
+let cart={},chosen=[],total=0;
+const $=id=>document.getElementById(id),fmt=n=>'$'+n.toFixed(2);
+function screen(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active')}
+function renderProducts(){let h='';products.forEach((p,i)=>{let q=cart[i]||0;h+=`<div class="product ${q?'chosen':''}"><div class="emoji">${p[0]}</div><div class="name">${p[1]}</div><div class="price">${fmt(p[2])}</div><div class="quantity"><button onclick="change(${i},-1)">－</button><span>${q}</span><button onclick="change(${i},1)">＋</button></div></div>`});$('products').innerHTML=h;total=products.reduce((s,p,i)=>s+p[2]*(cart[i]||0),0);$('cartTotal').textContent='總共：'+fmt(total);$('pay').disabled=!total}
+function change(i,d){cart[i]=Math.max(0,(cart[i]||0)+d);if(!cart[i])delete cart[i];renderProducts()}
+function openPay(){screen('payment');$('due').textContent=fmt(total);$('receipt').innerHTML=products.map((p,i)=>cart[i]?`<div><span>${p[0]} ${p[1]} × ${cart[i]}</span><span>${fmt(p[2]*cart[i])}</span></div>`:'').join('');chosen=[];renderMoney();renderPaid()}
+function renderMoney(){$('money').innerHTML=money.map((m,i)=>`<button class="money" data-id="${m.id}" data-kind="${m.kind}" onclick="add(${i})"><div class="${m.kind==='coin'?'coin-frame':'note-frame'}"><img src="${m.img}" alt="${m.label}"></div><div class="money-label">${m.label}</div></button>`).join('')}
+function add(i){chosen.push(money[i]);renderPaid()}
+function renderPaid(){let n=chosen.reduce((s,x)=>s+x.v,0);$('paidTotal').textContent=fmt(n);$('paid').innerHTML=chosen.map((x,i)=>`<span class="chip" onclick="removeMoney(${i})">${x.label} ✕</span>`).join('');$('feedback').textContent='';$('feedback').className='feedback'}
+function removeMoney(i){chosen.splice(i,1);renderPaid()}
+function check(){let paid=chosen.reduce((s,x)=>s+x.v,0),diff=Math.round((paid-total)*100)/100,fb=$('feedback');if(diff<0){fb.textContent='❌ 仲差 '+fmt(-diff)+'，試多次！';fb.className='feedback bad';return}let change=diff;screen('result');$('resultbox').innerHTML=`<div class="result-icon">🎉🛍️🎉</div><h2>做得好！</h2><p>應付：${fmt(total)}　實付：${fmt(paid)}</p>${change?`<p class="good" style="font-size:24px;font-weight:bold">找錢：${fmt(change)}</p>`:'<p class="good" style="font-size:24px;font-weight:bold">啱晒！你付得啱錢！</p>'}`}
+$('pay').onclick=openPay;$('clear').onclick=()=>{chosen=[];renderPaid()};$('check').onclick=check;$('again').onclick=()=>{cart={};chosen=[];screen('shop');renderProducts()};renderProducts();
+</script>
+</body>
+</html>
